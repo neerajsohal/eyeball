@@ -14,7 +14,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Symfony\Component\Console\Application; 
 use Eyeball\Commands\VerifyCommand;
 
+
 $app = new Application();
 $app->add(new VerifyCommand());
+
 $app->run();
 ?>

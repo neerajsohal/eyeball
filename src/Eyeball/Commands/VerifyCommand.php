@@ -8,6 +8,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Finder\Finder;
+
+
+use SMTP\ValidateEmail;
 
 class VerifyCommand extends Command {
 
@@ -15,10 +19,11 @@ class VerifyCommand extends Command {
         $this
             ->setName('verify:emails')
             ->setDescription('Verify Given Email Addresses')
-            ->addArgument(
-                'file',
-                InputArgument::OPTIONAL,
-                'Scan email addresses from a CSV file with one email per line.'
+             ->addOption(
+               'file',
+               null,
+               InputOption::VALUE_OPTIONAL,
+               'Scan email addresses from a CSV file with one email per line.'
             )
             ->addArgument(
                 'emails',
@@ -29,6 +34,23 @@ class VerifyCommand extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 
+        $emails = array();
+
+        if ($input->getArgument('emails')) {
+            $emails = array_merge($emails, $input->getArgument('emails'));
+        }
+
+        if($file = $input->getOption('file')) {
+            $finder = new Finder();
+        }
+        
+         $validator = new ValidateEmail();
+        print_r($validator->validate($emails));
+        
+    
+
+        // $output->writeln($file);
+        // $output->writeln($input->getArgument('emails'));
 
     }
 }

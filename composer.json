@@ -3,7 +3,8 @@
     "description": "SMTP based email adderesses verifier",
     "require": {
         "php": ">=5.3.3",
-        "symfony/console": "2.4.x-dev"
+        "symfony/console": "2.4.x-dev",
+        "symfony/finder": "dev-master"
     },
     "autoload": {
         "psr-0": {
