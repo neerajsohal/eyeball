@@ -72,7 +72,7 @@ class VerifyCommand extends Command {
                 $result = $validator->validate();
                 fputcsv($out_file, array($email, $result[$email]));
             } catch(\Exception $e) {
-                fputcsv($out_file, array($email, 'Exception Occured'));
+                fputcsv($out_file, array($email, $e->getMessage()));
             }
             unset($validator);
         }

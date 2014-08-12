@@ -1,0 +1,24 @@
+{
+    "alias": "eyeball.phar",
+    "chmod": "0755",
+    "compactors": [
+        "Herrera\\Box\\Compactor\\Json",
+        "Herrera\\Box\\Compactor\\Php"
+    ],
+    "directories": ["src"],
+    "files": [
+        "LICENSE"
+    ],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": ["Tests"],
+            "in": "vendor"
+        }
+    ],
+    "git-commit": "commit_id",
+    "git-version": "package_version",
+    "main": "bin/eyeball",
+    "output": "eyeball.phar",
+    "stub": true
+}
