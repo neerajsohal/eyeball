@@ -33,7 +33,7 @@ class VerifyCommand extends Command {
             ->addOption(
                'out-file',
                null,
-               InputOption::VALUE_OPTIONAL,
+               InputOption::VALUE_REQUIRED,
                'Specify a file to write output to.'
             )
             ->addArgument(
@@ -45,45 +45,87 @@ class VerifyCommand extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output) {
 
-        $emails = array();
-
-        if ($input->getArgument('emails')) {
-            $emails = array_merge($emails, $input->getArgument('emails'));
+        if (!$output->isQuiet() && $output->isDebug()) {
+            $output->writeln("<info>Initizing Validator</info>");
         }
 
+        $emails = array();
+
+        if (!$output->isQuiet() && $output->isDebug()) {
+            $output->writeln("<info>Checking if emails argument is present or not</info>");
+        }
+        if ($input->getArgument('emails')) {
+            if (!$output->isQuiet() && $output->isDebug()) {
+                $output->writeln("<info>emails argument found - processing emails</info>");
+            }
+            $emails = array_merge($emails, $input->getArgument('emails'));
+            if (!$output->isQuiet() && $output->isDebug()) {
+                $output->writeln("<info>processed emails... ".count($emails)." emails are in the queue</info>");
+            }
+        }
+
+        if (!$output->isQuiet() && $output->isDebug()) {
+            $output->writeln("<info>checking is in-file is specified or not</info>");
+        }
         if($input->getOption('in-file')) {
+            if (!$output->isQuiet() && $output->isDebug()) {
+                $output->writeln("<info>in-file argument found - processing emails</info>");
+            }
             $in_file = fopen($input->getOption('in-file'), "r");
             while(! feof($in_file)) {
                 array_push($emails, fgetcsv($in_file)[0]);
             }
-            
+            if (!$output->isQuiet() && $output->isDebug()) {
+                $output->writeln("<info>processed emails... ".count($emails)." emails are in the queue</info>");
+            }
             fclose($in_file);
         }
 
-        // print_R($emails);die();
-
+        if (!$output->isQuiet() && $output->isDebug()) {
+            $output->writeln("<info>checking if out-file is specified or not</info>");
+        }
         if($input->getOption('out-file')) {
-            $out_file = fopen($input->getOption('to-file'),"w");
+            if (!$output->isQuiet() && $output->isDebug()) {
+                $output->writeln("<info>user specified out-file found</info>");
+            }
+            $out_file = fopen($input->getOption('out-file'),"w");
         } else {
+            if (!$output->isQuiet() && $output->isDebug()) {
+                $output->writeln("<info>creating a default out-file: eyeball.log</info>");
+            }
             $out_file = fopen('eyeball.log', 'w');
         }
         
+        if (!$output->isQuiet() && $output->isDebug()) {
+            $output->writeln("<info>processing emails...</info>");
+        }
+        $ctr=0;
         foreach ($emails as $email) {
+            if (!$output->isQuiet() && $output->isDebug()) {
+                $output->writeln("<info>processing email <".$email."> #".++$ctr."...</info>");
+            }
             $validator = new ValidateEmail($email, $input->getOption('from-email'));
-            print_r($validator->validate());
-            $result = $validator->validate();
-
-            fputcsv($out_file, array($email, $result[$email]));
+            try {
+                $result = $validator->validate();
+                fputcsv($out_file, array($email, $result[$email]));
+                if (!$output->isQuiet() && $output->isDebug()) {
+                    $output->writeln("<info>email <".$email.">processed...</info>");
+                }
+            } catch(\Exception $e) {
+                fputcsv($out_file, array($email, 'Exception Occured'));
+                if (!$output->isQuiet() && $output->isDebug()) {
+                    $output->writeln("<info>error occured at #".$ctr.". Making a note of it...</info>");
+                }
+            }
             unset($validator);
         }
 
         if(isset($out_file)) fclose($out_file);
         if(isset($in_file)) fclose($in_file);
         
-    
-
-        // $output->writeln($file);
-        // $output->writeln($input->getArgument('emails'));
+        if (!$output->isQuiet() && $output->isDebug()) {
+            $output->writeln("<info>all done. Good Bye!</info>");
+        }
 
     }
 }
