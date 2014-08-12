@@ -19,7 +19,12 @@ class VerifyCommand extends Command {
         $this
             ->setName('verify:emails')
             ->setDescription('Verify Given Email Addresses')
-             ->addOption(
+            ->addOption(
+                'from-email',null,
+                InputOption::VALUE_REQUIRED,
+                'Specify a from email'
+            )
+            ->addOption(
                'in-file',
                null,
                InputOption::VALUE_OPTIONAL,
@@ -30,11 +35,6 @@ class VerifyCommand extends Command {
                null,
                InputOption::VALUE_OPTIONAL,
                'Specify a file to write output to.'
-            )
-            ->addOption(
-                'from-email',null,
-                InputOption::VALUE_REQUIRED,
-                'Specify a from email'
             )
             ->addArgument(
                 'emails',
