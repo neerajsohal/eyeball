@@ -1,11 +1,15 @@
 #!/usr/bin/env php
 <?php
 
-// set to run indefinitely if needed
+/* we need to run this command for infonite time */
 set_time_limit(0);
 
 /* Optional. It’s better to do it in the php.ini file */
 date_default_timezone_set('UTC'); 
+
+if (PHP_SAPI !== 'cli') {
+    echo 'Warning: Eyeball should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI'.PHP_EOL;
+}
 
 // include the composer autoloader
 require_once __DIR__ . '/../vendor/autoload.php'; 
@@ -13,10 +17,18 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // import the Symfony Console Application 
 use Symfony\Component\Console\Application; 
 use Eyeball\Commands\VerifyCommand;
+use Eyeball\Commands\AboutCommand;
 
+static $logo = "  _ _           _                 
+ | | |_ __   __| |___  _   _ ___  
+ | | | '_ \ / _` / _ \| | | / _ \ 
+ | | | |_) | (_| \__  | |_| \__  |
+ |_|_|_.__/ \__,_|___/| .__/|___/ 
+                     \___|     
+";
 
-$app = new Application();
-$app->add(new VerifyCommand());
-
-$app->run();
-?>
+$command = new VerifyCommand();
+$application = new Application($logo, '0.1');
+$application->add($command);
+$application->add(new AboutCommand());
+$application->run();
