@@ -19,16 +19,17 @@ use Symfony\Component\Console\Application;
 use Eyeball\Commands\VerifyCommand;
 use Eyeball\Commands\AboutCommand;
 
-static $logo = "  _ _           _                 
- | | |_ __   __| |___  _   _ ___  
- | | | '_ \ / _` / _ \| | | / _ \ 
- | | | |_) | (_| \__  | |_| \__  |
- |_|_|_.__/ \__,_|___/| .__/|___/ 
-                     \___|     
-";
+static $logo = " _ _           _                 
+| | |_ __   __| |___  _   _ ___  
+| | | '_ \ / _` / _ \| | | / _ \ 
+| | | |_) | (_| \__  | |_| \__  |
+|_|_|_.__/ \__,_|___/| .__/|___/ 
+                 \___|     
+
+Eyeball";
 
 $command = new VerifyCommand();
-$application = new Application($logo, '0.1');
+$application = new Application($logo, '@package_version@ - @commit_id@');
 $application->add($command);
 $application->add(new AboutCommand());
 $application->run();
