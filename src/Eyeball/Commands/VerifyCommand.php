@@ -20,10 +20,21 @@ class VerifyCommand extends Command {
             ->setName('verify:emails')
             ->setDescription('Verify Given Email Addresses')
              ->addOption(
-               'file',
+               'in-file',
                null,
                InputOption::VALUE_OPTIONAL,
                'Scan email addresses from a CSV file with one email per line.'
+            )
+            ->addOption(
+               'out-file',
+               null,
+               InputOption::VALUE_OPTIONAL,
+               'Specify a file to write output to.'
+            )
+            ->addOption(
+                'from-email',null,
+                InputOption::VALUE_REQUIRED,
+                'Specify a from email'
             )
             ->addArgument(
                 'emails',
@@ -40,12 +51,34 @@ class VerifyCommand extends Command {
             $emails = array_merge($emails, $input->getArgument('emails'));
         }
 
-        if($file = $input->getOption('file')) {
-            $finder = new Finder();
+        if($input->getOption('in-file')) {
+            $in_file = fopen($input->getOption('in-file'), "r");
+            while(! feof($in_file)) {
+                array_push($emails, fgetcsv($in_file)[0]);
+            }
+            
+            fclose($in_file);
+        }
+
+        // print_R($emails);die();
+
+        if($input->getOption('out-file')) {
+            $out_file = fopen($input->getOption('to-file'),"w");
+        } else {
+            $out_file = fopen('eyeball.log', 'w');
         }
         
-         $validator = new ValidateEmail();
-        print_r($validator->validate($emails));
+        foreach ($emails as $email) {
+            $validator = new ValidateEmail($email, $input->getOption('from-email'));
+            print_r($validator->validate());
+            $result = $validator->validate();
+
+            fputcsv($out_file, array($email, $result[$email]));
+            unset($validator);
+        }
+
+        if(isset($out_file)) fclose($out_file);
+        if(isset($in_file)) fclose($in_file);
         
     
 
